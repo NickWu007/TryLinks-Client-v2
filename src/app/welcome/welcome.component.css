@@ -1,0 +1,53 @@
+.tl-welcome {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 15% 70% 15%;
+}
+
+.tl-header {
+  font-size: 36px;
+  padding: 10px;
+  font-family: monospace;
+}
+
+.tl-content {
+  display: grid;
+  grid-template-rows: 70% 30%;
+}
+
+.tl-description {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  padding: 24px;
+}
+
+.tl-logo {
+  padding: 16px;
+}
+
+.tl-description-text {
+  margin-left: 20px;
+}
+
+.tl-demo-gif {
+  max-height: 200px;
+  padding: 8px;
+}
+
+.ti-actions {
+  min-height: 20%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ti-actions button {
+  background-color: dodgerblue;
+  margin: 0 200px;
+}
+
+a {
+  color: burlywood;
+}
