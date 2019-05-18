@@ -1,0 +1,36 @@
+:host {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tl-logo {
+  height: 40px;
+  margin: 0 16px;
+}
+
+.tl-expander {
+  flex-grow: 1;
+}
+
+.tl-logout-button, .tl-interactive-button, .tl-dashboard-button {
+  justify-self: flex-end;
+  padding: 0 24px;
+}
+
+.tl-tutorial-container {
+  flex-grow: 1;
+}
+
+.tl-tutorial-content {
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+}
+
+.tl-tutorial-main-desc,
+.tl-tutorial-main-col,
+.tl-tutorial-main-render {
+  flex-grow: 1;
+}

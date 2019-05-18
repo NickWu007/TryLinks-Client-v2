@@ -9,6 +9,8 @@ import {
   MatTabsModule,
   MatToolbarModule
 } from '@angular/material';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
@@ -22,6 +24,7 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { InteractiveComponent } from './interactive/interactive.component';
 import { ShellLineComponent } from './shell-line/shell-line.component';
+import { TutorialComponent } from './tutorial/tutorial.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,8 @@ import { ShellLineComponent } from './shell-line/shell-line.component';
     SignUpComponent,
     DashboardComponent,
     InteractiveComponent,
-    ShellLineComponent
+    ShellLineComponent,
+    TutorialComponent
   ],
   imports: [
     BrowserModule,
@@ -44,8 +48,10 @@ import { ShellLineComponent } from './shell-line/shell-line.component';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatSidenavModule,
     MatTabsModule,
     MatToolbarModule,
+    MatTooltipModule,
     ReactiveFormsModule
   ],
   providers: [],
