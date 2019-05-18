@@ -29,17 +29,16 @@
           ></ngx-codemirror>
           <div class="tl-tutorial-main-render-control">
               <pre class="tl-tutorial-main-render-error">{{compileError}}</pre>
-              <button mat-raised-button color="primary" class="tl-compile-btn">Save and Compile</button>
+              <button mat-raised-button color="primary" class="tl-compile-btn" (click)="onCompile()">Save and Compile</button>
           </div>
       </div>
 
       <div class="tl-tutorial-main-render">
-        RENDER
-          <!-- <div *ngIf="port == null" class="tl-tutorial-main-render-empty">
+          <div *ngIf="port == null" class="tl-tutorial-main-render-empty">
               <h2>Preview Page</h2>
               <p>When you are happy with your Links code, <br>press the "Compile" button below and see the web page generated!</p>
           </div>
-          <iframe *ngIf="port != null" [src]="renderUrl" height="100%" width="100%" onload="return false;" frameborder="0"></iframe> -->
+          <iframe *ngIf="port != null" [src]="renderUrl" height="100%" width="100%" onload="return false;" frameborder="0"></iframe>
       </div>
   </div>
 

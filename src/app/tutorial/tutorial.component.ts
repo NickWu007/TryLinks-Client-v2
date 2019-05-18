@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-tutorial',
@@ -19,11 +20,22 @@ export class TutorialComponent implements OnInit {
   };
   compileError = 'mock error';
   showFiller = false;
+  port: number;
+  renderUrl: SafeHtml;
 
-  constructor() { }
+  constructor(private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
     this.tutorialDescription = mockDescription;
+    this.renderUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.google.com');
+  }
+
+  onCompile(): void {
+    if (this.port) {
+      this.port = null;
+    } else {
+      this.port = 1;
+    }
   }
 
 }

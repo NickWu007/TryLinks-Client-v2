@@ -63,3 +63,12 @@
     bottom: 3%;
   }
 }
+
+.tl-tutorial-main-render-empty {
+  color: grey;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 94vh;
+}
