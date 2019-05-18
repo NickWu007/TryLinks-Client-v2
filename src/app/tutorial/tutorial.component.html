@@ -20,7 +20,7 @@
   </mat-drawer>
 
   <div class="tl-tutorial-content">
-      <div class="tl-tutorial-main-desc markdown-body" #description></div>
+      <div class="tl-tutorial-main-desc markdown-body" [innerHTML]="tutorialDescription|MarkdownToHtml"></div>
 
       <div class="tl-tutorial-main-col">
         EDITOR

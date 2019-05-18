@@ -7,15 +7,14 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 })
 export class TutorialComponent implements OnInit {
 
-  @ViewChild('description')
-  tutorialDescription;
+  tutorialDescription = '';
 
   showFiller = false;
 
   constructor() { }
 
   ngOnInit() {
-    this.tutorialDescription.nativeElement.innerHTML = mockDescription;
+    this.tutorialDescription = mockDescription;
   }
 
 }

@@ -12,6 +12,7 @@ import {
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {MarkdownToHtmlModule} from 'markdown-to-html-pipe';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -43,6 +44,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
+    MarkdownToHtmlModule,
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,
