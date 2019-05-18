@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ShellLineModel, LineType } from '../shell-line/shell-line.model';
+import starterGuideDescriptions from './interactive.guide';
 
 @Component({
   selector: 'app-interactive',
@@ -7,11 +8,14 @@ import { ShellLineModel, LineType } from '../shell-line/shell-line.model';
   styleUrls: ['./interactive.component.scss']
 })
 export class InteractiveComponent implements OnInit {
+  @ViewChild('shell') shell: any;
+
   inputPrompt = ' links> ';
   allLines: ShellLineModel[];
   currentCmd = '';
   currentInputLine = '';
   showLoadingDialog = false;
+  introIndex
 
   constructor() {}
 
@@ -23,11 +27,14 @@ export class InteractiveComponent implements OnInit {
       new ShellLineModel(LineType.stdout, 'stdout'),
       new ShellLineModel(LineType.stderr, 'stderr')
     ];
+
+    this.introIndex = 0;
+    this.showNewGuide();
   }
 
   scrollToBottom(): void {
-    // Element shell = querySelector(".tl-interactive-shell");
-    // shell.scrollTop = shell.scrollHeight;
+    const shell = this.shell.nativeElement;
+    shell.scrollTop = shell.scrollHeight;
   }
 
   onInputChange(): void {
@@ -43,11 +50,11 @@ export class InteractiveComponent implements OnInit {
       );
       this.currentCmd = '';
     } else if (this.currentCmd.trim() === 'next tip;') {
-      // _showNewIntro();
+      this.showNewGuide();
       this.currentCmd = '';
     } else if (this.currentCmd.trim() === 'go back;') {
-      // introIndex = introIndex > 1 ? introIndex - 2 : 0;
-      // _showNewIntro();
+      this.introIndex = this.introIndex > 1 ? this.introIndex - 2 : 0;
+      this.showNewGuide();
       this.currentCmd = '';
     } else {
       this.allLines.push(
@@ -55,7 +62,11 @@ export class InteractiveComponent implements OnInit {
       );
       if (this.currentInputLine.endsWith(';')) {
         this.currentCmd.split(';').forEach(command => {
+          if (command.length > 0) {
+            const commandToSent = command + ';';
+            console.log(commandToSent);
           //   socket.emit('new command', command + ';');
+          }
         });
         this.inputPrompt = ' links > ';
         this.currentCmd = '';
@@ -64,5 +75,13 @@ export class InteractiveComponent implements OnInit {
       }
     }
     this.currentInputLine = '';
+  }
+
+  showNewGuide(): void {
+    if (this.introIndex < starterGuideDescriptions.length) {
+      this.allLines
+          .push(new ShellLineModel(LineType.introduction, starterGuideDescriptions[this.introIndex]));
+      this.introIndex++;
+    }
   }
 }

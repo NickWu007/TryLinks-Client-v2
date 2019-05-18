@@ -12,7 +12,7 @@
     <p>You can find some pointers to the syntax <a href="http://links-lang.org/quick-help.html">here</a>, Have fun
       exploring Links!</p>
   </div>
-  <div class="tl-interactive-shell">
+  <div class="tl-interactive-shell" #shell>
     <app-shell-line *ngFor="let line of allLines" [line]="line"></app-shell-line>
     <mat-form-field class="tl-interactive-input" floatLabel="false">
       <input matInput type="text" [(ngModel)]="currentInputLine" (keyup.enter)="onInputChange()"/>

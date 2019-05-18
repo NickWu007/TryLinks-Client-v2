@@ -32,27 +32,12 @@
   flex-grow: 1;
   border-radius: 8px;
   background-color: black;
-  overflow: auto;
-}
-
-.tl-interactive-header {
-  display: grid;
-  grid-template-columns: 60px 4fr 1fr 1fr;
-  font-family: monospace;
-}
-
-.tl-header-name {
-  line-height: 56px;
-}
-
-.tl-logo {
-  height: 40px;
-  padding: 10% 10% 10% 20%;
 }
 
 .tl-interactive-input {
-  padding-left: 8px;
-  width: 95%;
+  padding: 0 8px;
+  box-sizing: border-box;
+  width: 100%;
   background-color: transparent;
   font-family: monospace;
 }
