@@ -20,6 +20,8 @@ import { StartComponent } from './start/start.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { InteractiveComponent } from './interactive/interactive.component';
+import { ShellLineComponent } from './shell-line/shell-line.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     StartComponent,
     SignInComponent,
     SignUpComponent,
-    DashboardComponent
+    DashboardComponent,
+    InteractiveComponent,
+    ShellLineComponent
   ],
   imports: [
     BrowserModule,
