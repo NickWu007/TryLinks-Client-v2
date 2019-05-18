@@ -13,6 +13,9 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MarkdownToHtmlModule} from 'markdown-to-html-pipe';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/markdown/markdown';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -43,6 +46,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    CodemirrorModule,
     FormsModule,
     MarkdownToHtmlModule,
     MatCardModule,

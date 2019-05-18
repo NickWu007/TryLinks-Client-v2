@@ -8,7 +8,16 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 export class TutorialComponent implements OnInit {
 
   tutorialDescription = '';
-
+  source = 'var a = 1; a + 2;';
+  editorOptions = {
+    mode: 'links',
+    theme: 'material',
+    lineNumbers: true,
+    autofocus: true,
+    lineWrapping: true,
+    indentWithTabs: true,
+  };
+  compileError = 'mock error';
   showFiller = false;
 
   constructor() { }

@@ -23,10 +23,12 @@
       <div class="tl-tutorial-main-desc markdown-body" [innerHTML]="tutorialDescription|MarkdownToHtml"></div>
 
       <div class="tl-tutorial-main-col">
-        EDITOR
-          <textarea class="tl-tutorial-main-editor CodeMirror-scroll"></textarea>
+          <ngx-codemirror
+            [(ngModel)]="source"
+            [options]="editorOptions"
+          ></ngx-codemirror>
           <div class="tl-tutorial-main-render-control">
-              <!-- <pre class="tl-tutorial-main-render-error">{{compileError}}</pre> -->
+              <pre class="tl-tutorial-main-render-error">{{compileError}}</pre>
               <button mat-raised-button color="primary" class="tl-compile-btn">Save and Compile</button>
           </div>
       </div>
