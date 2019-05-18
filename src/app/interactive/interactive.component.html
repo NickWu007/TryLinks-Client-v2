@@ -14,9 +14,9 @@
   </div>
   <div class="tl-interactive-shell">
     <app-shell-line *ngFor="let line of allLines" [line]="line"></app-shell-line>
-    <mat-form-field>
-      <mat-label>{{inputPrompt}}</mat-label>
-      <input matInput type="text" />
+    <mat-form-field class="tl-interactive-input" floatLabel="false">
+      <input matInput type="text" [(ngModel)]="currentInputLine" (keyup.enter)="onInputChange()"/>
+      <div matPrefix>{{inputPrompt}}</div>
     </mat-form-field>
   </div>
 </div>
