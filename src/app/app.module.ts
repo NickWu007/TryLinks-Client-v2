@@ -45,7 +45,6 @@ import { TutorialComponent } from './tutorial/tutorial.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
     CodemirrorModule,
     FormsModule,
@@ -60,7 +59,8 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

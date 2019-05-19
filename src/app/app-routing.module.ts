@@ -8,29 +8,33 @@ import { TutorialComponent } from './tutorial/tutorial.component';
 
 const routes: Routes = [
   {
-    path: '/welcome',
+    path: 'welcome',
     data: { title: 'Welcome to TryLinks' },
     component: WelcomeComponent
   },
   {
-    path: '/start',
+    path: 'start',
     data: { title: 'TryLinks' },
     component: StartComponent
   },
   {
-    path: '/dashboard',
+    path: 'dashboard',
     data: { title: 'TryLinks Dashboard' },
     component: DashboardComponent
   },
   {
-    path: '/interactive',
+    path: 'interactive',
     data: { title: 'TryLinks Interactive Mode' },
     component: InteractiveComponent
   },
   {
-    path: '/tutorial/:id',
+    path: 'tutorial/:id',
     data: { title: 'TryLinks Tutorial Mode' },
     component: TutorialComponent
+  },
+  {
+    path: '**',
+    redirectTo: '/welcome'
   }
 ];
 
