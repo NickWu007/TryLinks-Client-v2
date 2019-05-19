@@ -16,6 +16,7 @@ import {MarkdownToHtmlModule} from 'markdown-to-html-pipe';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
+import { HttpClientModule } from '@angular/common/http';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -48,6 +49,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     BrowserAnimationsModule,
     CodemirrorModule,
     FormsModule,
+    HttpClientModule,
     MarkdownToHtmlModule,
     MatCardModule,
     MatButtonModule,
