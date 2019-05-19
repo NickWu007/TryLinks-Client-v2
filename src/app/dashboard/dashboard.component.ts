@@ -8,18 +8,24 @@ import { Router } from '@angular/router';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-
-  constructor(private tryLinksService: TrylinksService, private router: Router) { }
+  constructor(
+    private tryLinksService: TrylinksService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    if (this.username === 'unknown user') {
+      this.logout();
+    }
   }
 
   get username() {
     return this.tryLinksService.username;
   }
 
-  logout(): void {
-
+  logout() {
+    this.tryLinksService
+      .logout()
+      .subscribe(_ => this.router.navigate(['welcome']));
   }
-
 }

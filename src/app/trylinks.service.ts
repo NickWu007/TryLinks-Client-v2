@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { SessionStorage } from 'ngx-store';
+import { SessionStorage, SessionStorageService } from 'ngx-store';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class TrylinksService {
   static headers = new HttpHeaders({ 'Content-Type': 'application/json' });
   static serverURL = environment.serviceUrl;
   static serverAddr = TrylinksService.serverURL + ':5000';
-  @SessionStorage() username = 'user';
+  @SessionStorage() username = 'unknown user';
   // static signupUrl = TrylinksService.serverAddr + '/api/user/signup';
   // static loginUrl = TrylinksService.serverAddr + '/api/user/login';
   // static updateUserUrl = serverAddr + '/api/user/update';
@@ -27,7 +27,7 @@ export class TrylinksService {
   // static tutorialHeadersUrl = serverAddr + '/api/tutorial/headers';
   // static defaultTutorialIdUrl = serverAddr + '/api/tutorial/defaultId';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private sessionStorageService: SessionStorageService) {}
 
   signup(username: string, email: string, password: string) {
     return this.http
@@ -71,6 +71,30 @@ export class TrylinksService {
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
             this.username = username;
+          }
+          return response.status === 200;
+        }),
+        catchError(error => {
+          console.log(`Login API failed with the following detail:\n`);
+          console.log(error);
+          return of(false);
+        })
+      );
+  }
+
+  logout(): Observable<boolean> {
+    return this.http
+      .get(
+        TrylinksService.serverAddr + '/api/logout',
+        {
+          headers: TrylinksService.headers,
+          observe: 'response'
+        }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            this.sessionStorageService.clear('all'); // removes all session storage data
           }
           return response.status === 200;
         }),
@@ -158,20 +182,6 @@ export class TrylinksService {
   //     print("File Read API failed");
   //     print(e.toString());
   //     return false;
-  //   }
-  // }
-
-  // Future<bool> logout() async {
-  //   window.localStorage.remove('username');
-  //   window.localStorage.remove('last_tutorial');
-  //   window.localStorage.remove('is_admin');
-  //   try {
-  //     await _http.get(_logoutUrl, headers: _headers);
-  //     return true;
-  //   } catch (e) {
-  //     print("Logout API failed with the following detail:\n");
-  //     print(e.toString());
-  //     return null;
   //   }
   // }
 
