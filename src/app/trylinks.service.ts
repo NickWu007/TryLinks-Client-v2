@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { SessionStorage } from 'ngx-store';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class TrylinksService {
   static headers = new HttpHeaders({ 'Content-Type': 'application/json' });
   static serverURL = environment.serviceUrl;
   static serverAddr = TrylinksService.serverURL + ':5000';
+  @SessionStorage() username = 'user';
   // static signupUrl = TrylinksService.serverAddr + '/api/user/signup';
   // static loginUrl = TrylinksService.serverAddr + '/api/user/login';
   // static updateUserUrl = serverAddr + '/api/user/update';
@@ -41,7 +43,9 @@ export class TrylinksService {
         }
       )
       .pipe(
-        map((response: HttpResponse<any>) => response.status === 200),
+        map((response: HttpResponse<any>) => {
+          return response.status === 200;
+        }),
         catchError(error => {
           console.log(`Signup API failed with the following detail:\n`);
           console.log(error);
@@ -64,7 +68,12 @@ export class TrylinksService {
         }
       )
       .pipe(
-        map((response: HttpResponse<any>) => response.status === 200),
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            this.username = username;
+          }
+          return response.status === 200;
+        }),
         catchError(error => {
           console.log(`Login API failed with the following detail:\n`);
           console.log(error);

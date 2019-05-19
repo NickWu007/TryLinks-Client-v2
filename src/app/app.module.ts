@@ -18,6 +18,7 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
 import { HttpClientModule } from '@angular/common/http';
+import { WebStorageModule } from 'ngx-store';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -62,6 +63,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     MatToolbarModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    WebStorageModule,
     AppRoutingModule
   ],
   providers: [],
