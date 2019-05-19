@@ -7,7 +7,8 @@ import {
   MatIconModule,
   MatInputModule,
   MatTabsModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatTooltipModule} from '@angular/material/tooltip';
@@ -56,6 +57,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     MatIconModule,
     MatInputModule,
     MatSidenavModule,
+    MatProgressSpinnerModule,
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,

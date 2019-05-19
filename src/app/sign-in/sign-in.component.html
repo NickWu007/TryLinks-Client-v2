@@ -31,7 +31,10 @@
       >Your username or password is not correct.</mat-error
     >
   </mat-form-field>
+  <mat-progress-spinner *ngIf="signInLoading" color="primary">
+  </mat-progress-spinner>
   <button
+    *ngIf="!signInLoading"
     class="sign-in-button"
     mat-raised-button
     color="primary"

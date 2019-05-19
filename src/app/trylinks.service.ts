@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -38,20 +40,17 @@ export class TrylinksService {
           headers: TrylinksService.headers
         }
       )
-      .subscribe(
-        (response: HttpResponse<any>) => {
-          return response.status;
-        },
-        error => {
-          console.log(
-            `Signup API failed with the following detail:\n ${error}`
-          );
-          return false;
-        }
+      .pipe(
+        map((response: HttpResponse<any>) => response.status === 200),
+        catchError(error => {
+          console.log(`Signup API failed with the following detail:\n`);
+          console.log(error);
+          return of(false);
+        })
       );
   }
 
-  login(username: string, password: string) {
+  login(username: string, password: string): Observable<boolean> {
     return this.http
       .post(
         TrylinksService.serverAddr + '/api/user/login',
@@ -60,17 +59,17 @@ export class TrylinksService {
           password
         },
         {
-          headers: TrylinksService.headers
+          headers: TrylinksService.headers,
+          observe: 'response'
         }
       )
-      .subscribe(
-        (response: HttpResponse<any>) => {
-          return response.status;
-        },
-        error => {
-          console.log(`Login API failed with the following detail:\n ${error}`);
-          return false;
-        }
+      .pipe(
+        map((response: HttpResponse<any>) => response.status === 200),
+        catchError(error => {
+          console.log(`Login API failed with the following detail:\n`);
+          console.log(error);
+          return of(false);
+        })
       );
   }
 
