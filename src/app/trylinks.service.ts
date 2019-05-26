@@ -13,6 +13,7 @@ export class TrylinksService {
   static serverURL = environment.serviceUrl;
   static serverAddr = TrylinksService.serverURL + ':5000';
   @SessionStorage() username = 'unknown user';
+  @SessionStorage() lastTutorialId: number = null;
   // static signupUrl = TrylinksService.serverAddr + '/api/user/signup';
   // static loginUrl = TrylinksService.serverAddr + '/api/user/login';
   // static updateUserUrl = serverAddr + '/api/user/update';
@@ -71,6 +72,7 @@ export class TrylinksService {
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
             this.username = username;
+            this.lastTutorialId = response.body.data.last_tutorial;
           }
           return response.status === 200;
         }),

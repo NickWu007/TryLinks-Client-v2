@@ -28,4 +28,12 @@ export class DashboardComponent implements OnInit {
       .logout()
       .subscribe(_ => this.router.navigate(['welcome']));
   }
+
+  navToInteractivePage(): void {
+    this.router.navigate(['interactive']);
+  }
+
+  navToTutorialPage(): void {
+    this.router.navigate(['tutorial', this.tryLinksService.lastTutorialId]);
+  }
 }
