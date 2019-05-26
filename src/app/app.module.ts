@@ -19,6 +19,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
 import { HttpClientModule } from '@angular/common/http';
 import { WebStorageModule } from 'ngx-store';
+import {MatDialogModule} from '@angular/material/dialog';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -27,7 +28,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StartComponent } from './start/start.component';
 import { SignInComponent } from './sign-in/sign-in.component';
-import { SignUpComponent } from './sign-up/sign-up.component';
+import { SignUpComponent, SignUpSuccessDialogComponent } from './sign-up/sign-up.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { InteractiveComponent } from './interactive/interactive.component';
 import { ShellLineComponent } from './shell-line/shell-line.component';
@@ -43,7 +44,8 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     DashboardComponent,
     InteractiveComponent,
     ShellLineComponent,
-    TutorialComponent
+    TutorialComponent,
+    SignUpSuccessDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -54,6 +56,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     MarkdownToHtmlModule,
     MatCardModule,
     MatButtonModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -66,6 +69,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     WebStorageModule,
     AppRoutingModule
   ],
+  entryComponents: [SignUpSuccessDialogComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

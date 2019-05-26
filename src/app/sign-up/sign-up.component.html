@@ -32,7 +32,9 @@
   <mat-error *ngIf="formGroup.hasError('passwordNotMatched') && (formGroup.touched || formGroup.dirty)">
     Passwords do not match!
   </mat-error>
-  <button class="sign-in-button" mat-raised-button color="primary" (click)="onSignUp()">
+  <mat-progress-spinner *ngIf="signUpLoading" color="primary">
+    </mat-progress-spinner>
+  <button *ngIf="!signUpLoading" class="sign-in-button" mat-raised-button color="primary" (click)="onSignUp()">
     Sign up
   </button>
 </form>

@@ -1,16 +1,40 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators, ValidatorFn, FormGroup, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  Validators,
+  ValidatorFn,
+  FormGroup,
+  ValidationErrors
+} from '@angular/forms';
+import { TrylinksService } from '../trylinks.service';
+import { Router } from '@angular/router';
+import { MatDialogRef, MatDialog } from '@angular/material';
 
-export const passwordMatch: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
+export const passwordMatch: ValidatorFn = (
+  control: FormGroup
+): ValidationErrors | null => {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
 
-  console.log(password.value);
-  console.log(confirmPassword.value);
-
-  return password && confirmPassword && password.value !== confirmPassword.value ?
-  { passwordNotMatched: true } : null;
+  return password && confirmPassword && password.value !== confirmPassword.value
+    ? { passwordNotMatched: true }
+    : null;
 };
+
+@Component({
+  selector: 'app-sign-up-success-dialog',
+  templateUrl: 'sign-up-success-dialog.html',
+})
+export class SignUpSuccessDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<SignUpSuccessDialogComponent>) {}
+
+  onClose(): void {
+    this.dialogRef.close();
+  }
+
+}
 
 @Component({
   selector: 'app-sign-up',
@@ -18,29 +42,48 @@ export const passwordMatch: ValidatorFn = (control: FormGroup): ValidationErrors
   styleUrls: ['./sign-up.component.scss']
 })
 export class SignUpComponent implements OnInit {
-  formGroup = this.fb.group({
-    username: ['', Validators.pattern('[a-zA-Z0-9]*')],
-    email: ['', Validators.email],
-    password: [''],
-    confirmPassword: ['']
-  }, { validators: passwordMatch });
+  formGroup = this.fb.group(
+    {
+      username: ['', Validators.pattern('[a-zA-Z0-9]*')],
+      email: ['', Validators.email],
+      password: [''],
+      confirmPassword: ['']
+    },
+    { validators: passwordMatch }
+  );
 
   hidePassword = true;
   signUpFailed = false;
+  signUpLoading = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private tryLinksService: TrylinksService,
+    public dialog: MatDialog
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   onSignUp(): void {
-    // TODO: add call to server for sign in.
-
-    this.signUpFailed = true;
-    this.username.setErrors({incorrect: true});
-    this.email.setErrors({incorrect: true});
-    this.password.setErrors({incorrect: true});
-    this.confirmPassword.setErrors({incorrect: true});
+    if (this.formGroup.hasError('passwordNotMatched')) {
+      return;
+    }
+    this.signUpLoading = true;
+    this.tryLinksService
+      .signup(this.username.value, this.email.value, this.password.value)
+      .subscribe((isSuccessful: boolean) => {
+        this.signUpLoading = false;
+        if (isSuccessful === true) {
+          this.dialog.open(SignUpSuccessDialogComponent);
+        } else {
+          this.signUpFailed = true;
+          this.username.setErrors({ incorrect: true });
+          this.email.setErrors({ incorrect: true });
+          this.password.setErrors({ incorrect: true });
+          this.confirmPassword.setErrors({ incorrect: true });
+        }
+      });
   }
 
   resetSignInError(): void {
