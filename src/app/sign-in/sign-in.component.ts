@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { TrylinksService } from '../trylinks.service';
 import {
   FormBuilder,
   Validators
 } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -16,19 +18,29 @@ export class SignInComponent implements OnInit {
   });
 
   hidePassword = true;
+  signInLoading = false;
   signInFailed = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private router: Router, private tryLinksService: TrylinksService) {}
 
   ngOnInit() {
   }
 
-  onSignIn(): void {
-    // TODO: add call to server for sign in.
-
-    this.signInFailed = true;
-    this.username.setErrors({incorrect: true});
-    this.password.setErrors({incorrect: true});
+  onSignIn() {
+    this.signInLoading = true;
+    this.tryLinksService.login(this.username.value, this.password.value).subscribe(
+      (isSuccessful: boolean) => {
+        this.signInLoading = false;
+        if (isSuccessful === true) {
+          this.signInFailed = false;
+          this.router.navigate(['dashboard']);
+        } else {
+          this.signInFailed = true;
+          this.username.setErrors({incorrect: true});
+          this.password.setErrors({incorrect: true});
+        }
+      }
+    );
   }
 
   resetSignInError(): void {

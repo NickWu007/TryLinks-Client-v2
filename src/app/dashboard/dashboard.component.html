@@ -2,10 +2,10 @@
   <img class="tl-logo" src="assets/logo.svg" alt="Links Logo">
   <div class="tl-header-name">TryLinks Dashboard</div>
   <div class="tl-expander"></div>
-  <button mat-button color="primary" class="tl-logout-button" (trigger)="logout()">Log out</button>
+  <button mat-button color="primary" class="tl-logout-button" (click)="logout()">Log out</button>
 </mat-toolbar>
 <div class="tl-dashboard-content">
-  <div class="tl-welcome-msg">Hello, User</div>
+  <div class="tl-welcome-msg">Hello, {{username}}!</div>
 
   <div class="tl-dashboard-nav">
     <mat-card class="tl-dashboard-interactive">
@@ -22,7 +22,7 @@
         </p>
       </mat-card-content>
       <mat-card-actions>
-        <button class="tl-nav-button" mat-raised-button color="primary">Launch Links Interactive Mode</button>
+        <button class="tl-nav-button" mat-raised-button color="primary" (click)="navToInteractivePage()">Launch Links Interactive Mode</button>
       </mat-card-actions>
     </mat-card>
     <mat-card class="tl-dashboard-tutorial">
@@ -36,10 +36,8 @@
         </p>
       </mat-card-content>
       <mat-card-actions>
-        <button class="tl-nav-button" mat-raised-button color="primary">Launch Links Tutorials Mode</button>
+        <button class="tl-nav-button" mat-raised-button color="primary" (click)="navToTutorialPage()">Launch Links Tutorials Mode</button>
       </mat-card-actions>
     </mat-card>
   </div>
-
-
 </div>
