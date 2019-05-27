@@ -1,17 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterContentInit, OnDestroy } from '@angular/core';
 import { ShellLineModel, LineType } from '../shell-line/shell-line.model';
 import starterGuideDescriptions from './interactive.guide';
 import { TrylinksService } from '../trylinks.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
+import * as io from 'socket.io-client';
 
 @Component({
   selector: 'app-interactive',
   templateUrl: './interactive.component.html',
   styleUrls: ['./interactive.component.scss']
 })
-export class InteractiveComponent implements OnInit {
+export class InteractiveComponent implements OnInit, AfterContentInit, OnDestroy {
   @ViewChild('shell') shell: any;
 
   inputPrompt = ' links> ';
@@ -20,19 +21,23 @@ export class InteractiveComponent implements OnInit {
   currentInputLine = '';
   showLoadingDialog = false;
   introIndex: number;
+  socket: SocketIOClient.Socket;
 
   constructor(
     private tryLinksService: TrylinksService,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    // this.dialog.open(LoadingDialogComponent);
     this.allLines = [];
     this.introIndex = 0;
-    this.showNewGuide();
+  }
 
+  ngAfterContentInit() {
+    this.dialog.open(LoadingDialogComponent);
+    this.cdRef.detectChanges();
     this.tryLinksService.startInteractiveMode().subscribe(
       (socketPath) => {
         if (socketPath === '') {
@@ -41,19 +46,37 @@ export class InteractiveComponent implements OnInit {
           return;
         }
 
-        console.log(`path: ${socketPath}`);
+        const namespace = TrylinksService.serverAddr + socketPath;
+        this.socket = io.connect(namespace);
+
+        this.socket.on('connect_error', (error) => console.log(error));
+        this.socket.on('connect', (_) => {
+          this.introIndex = 0;
+          this.socket.on('shell output', (output: string) => {
+            if (this.dialog.openDialogs && this.dialog.openDialogs !== undefined && this.dialog.openDialogs.length > 0) {
+              this.dialog.closeAll();
+              this.showNewGuide();
+            }
+            this.allLines.push(new ShellLineModel(
+                LineType.stdout, output.replace('\<stdin\>', 'line')));
+          });
+
+          this.socket.on('shell error', (error: string) => {
+            this.allLines.push(new ShellLineModel(
+                LineType.stderr, error.replace('\<stdin\>', 'line')));
+          });
+    });
       }
     );
   }
 
-  scrollToBottom(): void {
-    const shell = this.shell.nativeElement;
-    shell.scrollTop = shell.scrollHeight;
+  ngOnDestroy(): void {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
   }
 
   onInputChange(): void {
-    this.scrollToBottom();
-
     this.currentCmd += '\n' + this.currentInputLine;
     if (this.currentCmd.trim() === 'skip intro;') {
       this.allLines.push(
@@ -78,8 +101,7 @@ export class InteractiveComponent implements OnInit {
         this.currentCmd.split(';').forEach(command => {
           if (command.length > 0) {
             const commandToSent = command + ';';
-            console.log(commandToSent);
-            //   socket.emit('new command', command + ';');
+            this.socket.emit('new command', command + ';');
           }
         });
         this.inputPrompt = ' links > ';
@@ -101,5 +123,15 @@ export class InteractiveComponent implements OnInit {
       );
       this.introIndex++;
     }
+  }
+
+  navToDashboardPage(): void {
+    this.router.navigate(['dashboard']);
+  }
+
+  logout(): void {
+    this.tryLinksService
+      .logout()
+      .subscribe(_ => this.router.navigate(['welcome']));
   }
 }
