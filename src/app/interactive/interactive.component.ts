@@ -1,6 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ShellLineModel, LineType } from '../shell-line/shell-line.model';
 import starterGuideDescriptions from './interactive.guide';
+import { TrylinksService } from '../trylinks.service';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-interactive',
@@ -15,21 +19,31 @@ export class InteractiveComponent implements OnInit {
   currentCmd = '';
   currentInputLine = '';
   showLoadingDialog = false;
-  introIndex
+  introIndex: number;
 
-  constructor() {}
+  constructor(
+    private tryLinksService: TrylinksService,
+    private router: Router,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit() {
-    // TODO: remove the mock
-    this.allLines = [
-      new ShellLineModel(LineType.introduction, 'introduction'),
-      new ShellLineModel(LineType.userInput, 'user input'),
-      new ShellLineModel(LineType.stdout, 'stdout'),
-      new ShellLineModel(LineType.stderr, 'stderr')
-    ];
-
+    // this.dialog.open(LoadingDialogComponent);
+    this.allLines = [];
     this.introIndex = 0;
     this.showNewGuide();
+
+    this.tryLinksService.startInteractiveMode().subscribe(
+      (socketPath) => {
+        if (socketPath === '') {
+          this.dialog.closeAll();
+          this.router.navigate(['dashboard']);
+          return;
+        }
+
+        console.log(`path: ${socketPath}`);
+      }
+    );
   }
 
   scrollToBottom(): void {
@@ -65,7 +79,7 @@ export class InteractiveComponent implements OnInit {
           if (command.length > 0) {
             const commandToSent = command + ';';
             console.log(commandToSent);
-          //   socket.emit('new command', command + ';');
+            //   socket.emit('new command', command + ';');
           }
         });
         this.inputPrompt = ' links > ';
@@ -79,8 +93,12 @@ export class InteractiveComponent implements OnInit {
 
   showNewGuide(): void {
     if (this.introIndex < starterGuideDescriptions.length) {
-      this.allLines
-          .push(new ShellLineModel(LineType.introduction, starterGuideDescriptions[this.introIndex]));
+      this.allLines.push(
+        new ShellLineModel(
+          LineType.introduction,
+          starterGuideDescriptions[this.introIndex]
+        )
+      );
       this.introIndex++;
     }
   }

@@ -58,7 +58,6 @@ export class SignUpComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     private tryLinksService: TrylinksService,
     public dialog: MatDialog
   ) {}

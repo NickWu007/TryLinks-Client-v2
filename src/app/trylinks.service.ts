@@ -40,7 +40,8 @@ export class TrylinksService {
           password
         },
         {
-          headers: TrylinksService.headers
+          headers: TrylinksService.headers,
+          withCredentials: true
         }
       )
       .pipe(
@@ -65,7 +66,8 @@ export class TrylinksService {
         },
         {
           headers: TrylinksService.headers,
-          observe: 'response'
+          observe: 'response',
+          withCredentials: true
         }
       )
       .pipe(
@@ -90,7 +92,8 @@ export class TrylinksService {
         TrylinksService.serverAddr + '/api/logout',
         {
           headers: TrylinksService.headers,
-          observe: 'response'
+          observe: 'response',
+          withCredentials: true
         }
       )
       .pipe(
@@ -108,39 +111,30 @@ export class TrylinksService {
       );
   }
 
-  // Future<bool> updateUser(
-  //     {String email, String password, int lastTutorial}) async {
-  //   try {
-  //     final response = await _http.post(_updateUserUrl,
-  //         headers: _headers,
-  //         body: JSON.encode({
-  //           'email': email,
-  //           'password': password,
-  //           'last_tutorial': lastTutorial,
-  //         }));
-  //     if (response.statusCode == 200) {
-  //       var result = JSON.decode(response.body);
-  //       window.localStorage['last_tutorial'] = result["data"]["last_tutorial"];
-  //     }
-  //     return response.statusCode == 200;
-  //   } catch (e) {
-  //     print("Update User API failed with the following detail:\n");
-  //     print(e.toString());
-  //     return false;
-  //   }
-  // }
-
-  // Future<String> startInteractiveMode() async {
-  //   try {
-  //     final response = await _http.get(_interactiveUrl, headers: _headers);
-  //     final socketPath = JSON.decode(response.body)['path'];
-  //     return socketPath;
-  //   } catch (e) {
-  //     print("InteractiveUrl API failed with the following detail:\n");
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
+  startInteractiveMode(): Observable<string> {
+    return this.http
+      .get(
+        TrylinksService.serverAddr + '/api/initInteractive',
+        {
+          headers: TrylinksService.headers,
+          observe: 'response',
+          withCredentials: true
+        }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body.path;
+          }
+          return '';
+        }),
+        catchError(error => {
+          console.log(`InteractiveUrl API failed with the following detail:\n`);
+          console.log(error);
+          return of('');
+        })
+      );
+  }
 
   // Future<String> compileAndDeploy() async {
   //   try {

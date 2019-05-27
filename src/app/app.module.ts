@@ -17,7 +17,7 @@ import {MarkdownToHtmlModule} from 'markdown-to-html-pipe';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { WebStorageModule } from 'ngx-store';
 import {MatDialogModule} from '@angular/material/dialog';
 
@@ -33,6 +33,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { InteractiveComponent } from './interactive/interactive.component';
 import { ShellLineComponent } from './shell-line/shell-line.component';
 import { TutorialComponent } from './tutorial/tutorial.component';
+import { LoadingDialogComponent } from './loading-dialog/loading-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     InteractiveComponent,
     ShellLineComponent,
     TutorialComponent,
-    SignUpSuccessDialogComponent
+    SignUpSuccessDialogComponent,
+    LoadingDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -53,6 +55,9 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     CodemirrorModule,
     FormsModule,
     HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'connect.sid',
+    }),
     MarkdownToHtmlModule,
     MatCardModule,
     MatButtonModule,
@@ -69,7 +74,7 @@ import { TutorialComponent } from './tutorial/tutorial.component';
     WebStorageModule,
     AppRoutingModule
   ],
-  entryComponents: [SignUpSuccessDialogComponent],
+  entryComponents: [SignUpSuccessDialogComponent, LoadingDialogComponent],
   providers: [],
   bootstrap: [AppComponent]
 })
