@@ -8,7 +8,8 @@ import {
   MatInputModule,
   MatTabsModule,
   MatToolbarModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatListModule
 } from '@angular/material';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatTooltipModule} from '@angular/material/tooltip';
@@ -63,6 +64,7 @@ import { LoadingDialogComponent } from './loading-dialog/loading-dialog.componen
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatListModule,
     MatIconModule,
     MatInputModule,
     MatSidenavModule,

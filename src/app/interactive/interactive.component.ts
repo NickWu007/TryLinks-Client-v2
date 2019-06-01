@@ -19,7 +19,6 @@ export class InteractiveComponent implements OnInit, AfterContentInit, OnDestroy
   allLines: ShellLineModel[];
   currentCmd = '';
   currentInputLine = '';
-  showLoadingDialog = false;
   introIndex: number;
   socket: SocketIOClient.Socket;
 

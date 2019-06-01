@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { TrylinksService } from '../trylinks.service';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import * as io from 'socket.io-client';
+import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-tutorial',
@@ -7,72 +12,136 @@ import { DomSanitizer, SafeHtml} from '@angular/platform-browser';
   styleUrls: ['./tutorial.component.scss', './markdown.scss']
 })
 export class TutorialComponent implements OnInit {
-
+  // TODO(fix links styling in editor).
   tutorialDescription = '';
-  source = 'var a = 1; a + 2;';
+  source = '';
   editorOptions = {
     mode: 'links',
     theme: 'material',
     lineNumbers: true,
     autofocus: true,
     lineWrapping: true,
-    indentWithTabs: true,
+    indentWithTabs: true
   };
-  compileError = 'mock error';
-  showFiller = false;
+  compileError = '';
   port: number;
   renderUrl: SafeHtml;
+  id: number;
+  headers: any[];
+  socket: SocketIOClient.Socket;
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor(
+    private sanitizer: DomSanitizer,
+    private tryLinksService: TrylinksService,
+    private router: Router,
+    public dialog: MatDialog,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    this.tutorialDescription = mockDescription;
-    this.renderUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.google.com');
+    this.loadTutorial();
+  }
+
+  loadTutorial() {
+    this.tryLinksService.getTutorialHeaders().subscribe(headers => {
+      this.headers = headers;
+      this.id = (this.route.snapshot.paramMap.get('id') as unknown) as number;
+      this.tryLinksService
+        .getTutorialDesc(this.id)
+        .subscribe((description: string) => {
+          if (description.length === 0) {
+            this.tryLinksService
+              .getDefaultTutorialId()
+              .subscribe((defaultId: number) => {
+                this.router.navigate(['tutorial', defaultId]);
+              });
+            return;
+          }
+
+          this.tutorialDescription = description;
+          this.tryLinksService.getTutorialSource(this.id).subscribe(source => {
+            if (source === '') {
+              this.router.navigate(['dashboard']);
+            } else {
+              this.source = source;
+              this.tryLinksService
+                .updateUser(this.id)
+                .subscribe((isSuccessful: boolean) => {
+                  if (isSuccessful) {
+                  } else {
+                  }
+                });
+            }
+          });
+        });
+    });
   }
 
   onCompile(): void {
-    if (this.port) {
-      this.port = null;
-    } else {
-      this.port = 1;
-    }
+    this.dialog.open(LoadingDialogComponent);
+    this.tryLinksService
+      .saveTutorialSource(this.id, this.source)
+      .subscribe(_ => {
+        this.tryLinksService.compileAndDeploy().subscribe(socketPath => {
+          if (socketPath === '') {
+            this.dialog.closeAll();
+            return;
+          }
+
+          this.compileError = '';
+          if (this.socket && this.socket.connected) {
+            this.socket.emit('compile');
+          } else {
+            const namespace = TrylinksService.serverAddr + socketPath;
+            this.socket = io.connect(namespace);
+
+            this.socket.on('connect', _ => {
+              this.socket.on('compiled', port => {
+                this.dialog.closeAll();
+                this.port = port;
+                this.renderUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+                  TrylinksService.serverURL + `:${port}`
+                );
+              });
+
+              this.socket.on('compile error', error => {
+                this.compileError = error;
+                this.port = null;
+              });
+
+              this.socket.on('shell error', error => {
+                this.compileError = error;
+                this.port = null;
+              });
+
+              this.socket.emit('compile');
+            });
+          }
+        });
+      });
   }
 
+  navToTutorial(i) {
+    this.id = i;
+    this.port = null;
+    if (this.socket != null) {
+      this.socket.disconnect();
+    }
+    this.router.navigate(['tutorial', i]);
+    this.loadTutorial();
+  }
+
+  navToDashboardPage(): void {
+    this.router.navigate(['dashboard']);
+  }
+
+  navToInteractivePage(): void {
+    this.router.navigate(['interactive']);
+  }
+
+  logout(): void {
+    this.tryLinksService
+      .logout()
+      .subscribe(_ => this.router.navigate(['welcome']));
+  }
 }
-
-// tslint:disable-next-line:one-variable-per-declaration
-const mockDescription =
-`
-## Lesson 1 Hello World
-
-#### You can navigate to other tutorials by click the menu icon on the upper left corner.
-
-### Goal: make a web page that says "Hello World!".
-
-Let's start with the simplest possible program: one that just prints "Hello, world" (albeit on a Web page). The starter code will not work right away, but you can fix it real quick!
-
-This is a tiny bit more complicated than you might expect. Let's go through the main components of the program:
-
-The \`mainPage\` function defines what to do to render the main page of the program. The keyword fun starts a function definition, and we write \`(_)\` to indicate that there is one argument but that we don't care about its value. (The underscore \`_\` is a wildcard that can be used as a variable if we don't care about the variable's value.) The body of the function is enclosed in curly braces.
-
-The body of the function defines the return value. In Links, the body of a function is evaluated to a value, which is returned. In this case, the return value is a *page*, defined using the \`page\` keyword. Pages can be defined using XML literals; for example, here we write \`<html>\` and \`<body>\` tags, then the appropriate closing tags. The difference between a \`page\` and an \`XML\` value is that a page has additional structure needed for Links to render the page as the result of a web request (for example to handle any forms embedded in the page).
-
-The \`main\` function calls \`addRoute\` to install the \`mainPage\` handler as the default response to any HTTP request, and \`startServer()\` starts the Links web server.
-
-If you run the program now, it would show an empty page. Change the \`page\` returned by \`mainPage\` to include a \`<h1>\` tag that has the text "Hello World!". Once you have done that. Click the "Compile" button and see the result!
-
-If you don't see the page and got some errors, double check you have your tags properly closed.
-
-### Exercises
-
-1. Change the program by modifying the content of the HTML body, or adding content (such as a page title) under the \`<head>\` tag. Does this work? What happens if you add HTML with unbalanced tags, e.g. \`<p> test <b> bold </p>\`?
-
-2. In Links, there is a difference between a \`page\` (which is a legitimate response to an HTTP request) and plain XML. What happens if you omit the keyword \`page\` from \`mainPage\`?
-
-3. If you are familiar with CSS or JavaScript, what happens if you include a \`<style>\` or \`<script>\` tag in the page content?
-
-#### You can find the solution to this tutorial here
-
-<https://github.com/links-lang/links-tutorial/wiki/Lesson-1%3A-Hello%2C-world%21>
-
-`;
