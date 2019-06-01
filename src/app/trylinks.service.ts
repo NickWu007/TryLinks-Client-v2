@@ -14,21 +14,11 @@ export class TrylinksService {
   static serverAddr = TrylinksService.serverURL + ':5000';
   @SessionStorage() username = 'unknown user';
   @SessionStorage() lastTutorialId: number = null;
-  // static signupUrl = TrylinksService.serverAddr + '/api/user/signup';
-  // static loginUrl = TrylinksService.serverAddr + '/api/user/login';
-  // static updateUserUrl = serverAddr + '/api/user/update';
-  // static interactiveUrl = serverAddr + '/api/initInteractive';
-  // static compileUrl = serverAddr + '/api/compile';
-  // static fileReadUrl = serverAddr + '/api/file/read';
-  // static fileWriteUrl = serverAddr + '/api/file/write';
-  // static logoutUrl = serverAddr + '/api/logout';
 
-  // static tutorialUrl = serverAddr + '/api/tutorial/description';
-  // static newTutorialUrl = serverAddr + '/api/tutorial/create';
-  // static tutorialHeadersUrl = serverAddr + '/api/tutorial/headers';
-  // static defaultTutorialIdUrl = serverAddr + '/api/tutorial/defaultId';
-
-  constructor(private http: HttpClient, private sessionStorageService: SessionStorageService) {}
+  constructor(
+    private http: HttpClient,
+    private sessionStorageService: SessionStorageService
+  ) {}
 
   signup(username: string, email: string, password: string) {
     return this.http
@@ -88,14 +78,11 @@ export class TrylinksService {
 
   logout(): Observable<boolean> {
     return this.http
-      .get(
-        TrylinksService.serverAddr + '/api/logout',
-        {
-          headers: TrylinksService.headers,
-          observe: 'response',
-          withCredentials: true
-        }
-      )
+      .get(TrylinksService.serverAddr + '/api/logout', {
+        headers: TrylinksService.headers,
+        observe: 'response',
+        withCredentials: true
+      })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -113,14 +100,11 @@ export class TrylinksService {
 
   startInteractiveMode(): Observable<string> {
     return this.http
-      .get(
-        TrylinksService.serverAddr + '/api/initInteractive',
-        {
-          headers: TrylinksService.headers,
-          observe: 'response',
-          withCredentials: true
-        }
-      )
+      .get(TrylinksService.serverAddr + '/api/initInteractive', {
+        headers: TrylinksService.headers,
+        observe: 'response',
+        withCredentials: true
+      })
       .pipe(
         map((response: HttpResponse<any>) => {
           if (response.status === 200) {
@@ -136,113 +120,213 @@ export class TrylinksService {
       );
   }
 
-  // Future<String> compileAndDeploy() async {
-  //   try {
-  //     final response = await _http.get(_compileUrl, headers: _headers);
-  //     final socketPath = JSON.decode(response.body)['path'];
-  //     return socketPath;
-  //   } catch (e) {
-  //     print("InteractiveUrl API failed with the following detail:\n");
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
+  compileAndDeploy(): Observable<string> {
+    return this.http
+      .get(TrylinksService.serverAddr + '/api/compile', {
+        headers: TrylinksService.headers,
+        observe: 'response',
+        withCredentials: true
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body.path;
+          }
+          return '';
+        }),
+        catchError(error => {
+          console.log(
+            `compileAndDeploy API failed with the following detail:\n`
+          );
+          console.log(error);
+          return of('');
+        })
+      );
+  }
 
-  // Future<String> getTutorialSource(int id) async {
-  //   try {
-  //     final response = await _http.post(_fileReadUrl,
-  //         headers: _headers, body: JSON.encode({'tutorial': id}));
-  //     if (response.statusCode == 200) {
-  //       var result = JSON.decode(response.body);
-  //       return result["fileData"];
-  //     } else {
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print("File Read API failed");
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
+  getTutorialSource(id: number): Observable<string> {
+    return this.http
+      .post(
+        TrylinksService.serverAddr + '/api/file/read',
+        {
+          tutorial: id
+        },
+        {
+          headers: TrylinksService.headers,
+          observe: 'response',
+          withCredentials: true
+        }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body.fileData;
+          }
+          return '';
+        }),
+        catchError(error => {
+          console.log(`File Read API failed:\n`);
+          console.log(error);
+          return of('');
+        })
+      );
+  }
 
-  // Future<bool> saveTutorialSource(int id, String source) async {
-  //   try {
-  //     final response = await _http.post(_fileWriteUrl,
-  //         headers: _headers,
-  //         body: JSON.encode({
-  //           'tutorial': id,
-  //           'fileData': source,
-  //         }));
-  //     return response.statusCode == 200;
-  //   } catch (e) {
-  //     print("File Read API failed");
-  //     print(e.toString());
-  //     return false;
-  //   }
-  // }
+  saveTutorialSource(id: number, source: string): Observable<boolean> {
+    return this.http
+      .post(
+        TrylinksService.serverAddr + '/api/file/write',
+        {
+          tutorial: id,
+          fileData: source
+        },
+        {
+          headers: TrylinksService.headers,
+          observe: 'response',
+          withCredentials: true
+        }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          return response.status === 200;
+        }),
+        catchError(error => {
+          console.log(`File Read API failed:\n`);
+          console.log(error);
+          return of(false);
+        })
+      );
+  }
 
-  // Future<String> getTutorialDesc(int id) async {
-  //   try {
-  //     final response = await _http.post(_tutorialUrl,
-  //         headers: _headers, body: JSON.encode({'tutorialId': id}));
-  //     if (response.statusCode == 200) {
-  //       var result = JSON.decode(response.body);
-  //       return result["description"];
-  //     } else {
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print("Tutorial Read API failed");
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
+  getTutorialDesc(id: number): Observable<string> {
+    return this.http
+      .post(
+        TrylinksService.serverAddr + '/api/tutorial/description',
+        {
+          tutorialId: id
+        },
+        {
+          headers: TrylinksService.headers,
+          observe: 'response',
+          withCredentials: true
+        }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body.description;
+          }
+          return '';
+        }),
+        catchError(error => {
+          console.log(`Tutorial Read API failed:\n`);
+          console.log(error);
+          return of('');
+        })
+      );
+  }
 
-  // Future<bool> createTutorial(String title, String desc, String source) async {
-  //   try {
-  //     final response = await _http.post(_newTutorialUrl,
-  //         headers: _headers,
-  //         body: JSON.encode({
-  //           'title': title,
-  //           'description': desc,
-  //           'source': source
-  //         }));
-  //     if (response.statusCode == 200) {
-  //       return true;
-  //     } else {
-  //       print((JSON.decode(response.body))["message"]);
-  //       return null;
-  //     }
+  createTutorial(
+    title: string,
+    description: string,
+    source: string
+  ): Observable<boolean> {
+    return this.http
+      .post(
+        TrylinksService.serverAddr + '/api/tutorial/create',
+        {
+          title,
+          description,
+          source
+        },
+        {
+          headers: TrylinksService.headers,
+          observe: 'response',
+          withCredentials: true
+        }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          return response.status === 200;
+        }),
+        catchError(error => {
+          console.log(`Tutorial Create API failed:\n`);
+          console.log(error);
+          return of(false);
+        })
+      );
+  }
 
-  //   } catch (e) {
-  //     print("Tutorial Create API failed");
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
+  getTutorialHeaders(): Observable<Array<string>> {
+    return this.http
+      .get(TrylinksService.serverAddr + '/api/tutorial/headers', {
+        headers: TrylinksService.headers,
+        observe: 'response',
+        withCredentials: true
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body.headers;
+          }
+          return [];
+        }),
+        catchError(error => {
+          console.log(`Retrieval of tutorial titles failed:\n`);
+          console.log(error);
+          return of([]);
+        })
+      );
+  }
 
-  // Future<List> getTutorialHeaders() async {
-  //   try {
-  //     final response = await _http.get(_tutorialHeadersUrl, headers: _headers);
-  //     if (response.statusCode != 200) return null;
-  //     var result = JSON.decode(response.body);
-  //     return result["headers"];
-  //   } catch (e) {
-  //     print("Retrieval of tutorials' titles failed");
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
+  getDefaultTutorialId(): Observable<number> {
+    return this.http
+      .get(TrylinksService.serverAddr + '/api/tutorial/defaultId', {
+        headers: TrylinksService.headers,
+        observe: 'response',
+        withCredentials: true
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            return response.body.tutorialId;
+          }
+          return 0;
+        }),
+        catchError(error => {
+          console.log(`Retrieval of tutorial titles failed:\n`);
+          console.log(error);
+          return of(0);
+        })
+      );
+  }
 
-  // Future<int> getDefaultTutorialId() async {
-  //   try {
-  //     final response = await _http.get(_defaultTutorialIdUrl, headers: _headers);
-  //     if (response.statusCode != 200) return null;
-  //     var result = JSON.decode(response.body);
-  //     return result["tutorialId"];
-  //   } catch (e) {
-  //     print("Could not retrieve a default tutorial's ID");
-  //     print(e.toString());
-  //     return null;
-  //   }
+  updateUser(lastTutorial: number): Observable<boolean> {
+    return this.http
+      .post(
+        TrylinksService.serverAddr + '/api/user/update',
+        {
+          last_tutorial: lastTutorial,
+          password: null
+        },
+        {
+          headers: TrylinksService.headers,
+          observe: 'response',
+          withCredentials: true
+        }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => {
+          if (response.status === 200) {
+            this.lastTutorialId = response.body.data.last_tutorial;
+          }
+          return response.status === 200;
+        }),
+        catchError(error => {
+          console.log(`Update User API failed with the following detail:\n`);
+          console.log(error);
+          return of(false);
+        })
+      );
+  }
 }
